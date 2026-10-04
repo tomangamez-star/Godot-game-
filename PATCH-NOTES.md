@@ -1,10 +1,23 @@
-# Character Test v0.0.7 — Night crossroads polish
+# Character Test v0.0.8 — Direction polish + Attack 2
 
 Modified/new files only. Apply to repository root, preserving directories.
-Base commit: 7b5926649111d9a37fc5ed32277c8256ead5f3fe.
+Base commit: c8c4dcda40c24e1558a4f6d6633b07da3f6a000b.
 Keep your existing assets and main.tscn. Nothing was pushed remotely.
 
 ## Changes
+
+- Fixed left/right run snapping by anchoring horizontal placement to the stable
+  torso instead of whichever foot happens to lead each frame. Floor height is
+  still measured from the boots.
+- Reworked up/down idle into a shorter six-step breathing loop using the clean
+  source frames. Torso-centred X placement and boot-based Y placement stop the
+  character from wobbling or floating.
+- Left/right idle and up/down running retain their existing timing and poses.
+- Added a separate **ATK 2** touch button. Attack 2 is a faster two-cut combo
+  with a short visual lunge, opposing blue-violet crescents, impact flash and
+  its own cooldown ring. It reuses the existing clean character sheet rather
+  than adding duplicate megabytes of sprite art.
+- Desktop controls: Space triggers Attack 1; E triggers Attack 2.
 
 - Replaced the flat vector map with a project-integrated rainy anime city
   crossroads, generated from the supplied visual reference as a background-only
@@ -74,9 +87,9 @@ not a 53 MB APK. Browser eviction/private mode can require a full download.
 
 ## Validation
 
-Godot 4.3 import, script smoke tests and release Web export run locally.
-Tests cover all four idle/attack directions, attack completion, joystick
-movement/release, bounds and focus reset. A visual-capture script is provided
+Godot 4.3 import and script smoke tests run locally.
+Tests cover curated vertical idle frames, torso-stable side running, both attack
+completions, joystick movement/release, bounds and focus reset. A visual-capture script is provided
 for machines with a graphical display.
 Workflow YAML and generated cache-worker JavaScript syntax were also checked.
 Graphical browser validation was blocked by the execution environment's socket
