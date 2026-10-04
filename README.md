@@ -1,17 +1,30 @@
-# Character Test v0.0.1
+# Character Test v0.0.6
+Godot 4.3 character playtest with crossroads environment, directional movement,
+stable idle, distance-based run animation and revised energy attacks.
 
-White-background Godot 4.3 character-controller test. Includes the original HD male character, left joystick, right attack button, four directional sprite animations, 12 FPS running, 16.67 FPS energy-slash attack, and movement lock during attacks. Diagonal movement uses the closest of four facing directions. No enemies or extra gameplay systems.
+Read **PATCH-NOTES.md** for installation, changes, limits and validation.
 
-## Android APK
+## Browser testing (recommended)
+Apply this patch, enable repository Settings > Pages > Source: GitHub Actions,
+then run **Build and deploy browser test** from Actions. Later pushes to main
+publish automatically. The deployment summary contains the live test URL.
 
-Extract this ZIP, then upload the CONTENTS of the extracted folder to the root of a new GitHub repository. Include `.github/workflows/build-apk.yml`. Open Actions, select Build Character Test APK, and Run workflow. Download the Character-Test-v0.0.1-APK artifact and extract the APK. This is a debug-signed test build, not a store release.
+Expected URL after deployment: https://tomangamez-star.github.io/Godot-game-/
 
-This phone-safe edition removes ZIP metadata and explicit folder records that some Android file managers fail to extract. The game project itself is unchanged.
+Rotate your phone to landscape. Tap Play; use the left joystick and right attack
+button. Desktop: WASD / arrow keys and Space. WebGL 2 is required.
+Fullscreen/orientation locking depends on browser support.
 
-## Local test
+## APK (optional milestone test)
+Run **Build Character Test APK** manually. Download the v0.0.6 artifact.
+This is still a debug-signed test APK, not a store release. The default icon can
+be replaced later. Existing app package ID and CPU architectures are preserved.
 
-Import project.godot in Godot 4.3 and press F6/F5. Move with WASD/arrow keys or drag the left joystick; attack with Space or the right button. On mobile use two fingers for joystick and attack. Landscape orientation is configured.
-
-## Validation status
-
-Project structure and sprite dimensions checked during packaging. No Godot/Android SDK was available in the authoring workspace, so engine execution and APK compilation have not been verified there. The included workflow performs the actual import/export and reports any compiler errors. Character sheets are a first art pass: some attack trails touch neighbouring cells and foot alignment may need further art refinement. This test is intended to reveal those issues.
+## Local
+Import project.godot in Godot 4.3, then F6/F5.
+For the automated smoke test:
+```sh
+godot --headless --editor --path . --import --quit
+godot --headless --path . --script tests/smoke.gd
+```
+No sprites are redistributed separately; original license remains in assets.
