@@ -21,4 +21,8 @@ func _draw() -> void:
 	if game.state == "attack2":
 		draw_arc(attack2, 49, -PI / 2, -PI / 2 + TAU * game.clock / game.ATTACK2_DURATION, 40, Color(0.70, 0.92, 1.0), 3, true)
 	draw_string(ThemeDB.fallback_font, attack2 + Vector2(-22, 6), "ATK 2", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color.WHITE)
-	draw_string(ThemeDB.fallback_font, Vector2(31, 48), "NIGHT CROSSROADS / v0.0.8", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(0.82, 0.92, 1.0, 0.86))
+	draw_string(ThemeDB.fallback_font, Vector2(31, 48), "NIGHT CROSSROADS / v0.0.9", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(0.82, 0.92, 1.0, 0.86))
+	draw_rect(Rect2(31, 62, 164, 12), Color(0.01, 0.02, 0.03, 0.86), true)
+	draw_rect(Rect2(34, 65, 158, 6), Color(0.18, 0.035, 0.045, 0.95), true)
+	draw_rect(Rect2(34, 65, 158.0 * float(game.player_health) / 100.0, 6), Color(0.08, 0.82, 0.94, 1.0), true)
+	draw_string(ThemeDB.fallback_font, Vector2(202, 73), "HP %d" % game.player_health, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color.WHITE)

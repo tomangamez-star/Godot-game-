@@ -1,10 +1,20 @@
-# Character Test v0.0.8 — Direction polish + Attack 2
+# Character Test v0.0.9 — First enemy combat test
 
 Modified/new files only. Apply to repository root, preserving directories.
-Base commit: c8c4dcda40c24e1558a4f6d6633b07da3f6a000b.
+Base commit: 104eab1157e1b2feee9c37ce09ad68091cf86f09.
 Keep your existing assets and main.tscn. Nothing was pushed remotely.
 
 ## Changes
+
+- Added the supplied Knight as the first enemy bot using its native 8-direction
+  rows and 15-frame idle, run, melee, damage and death sheets.
+- The Knight detects and chases the player, respects the road/prop boundaries,
+  stops at melee range, attacks for 10 damage, reacts to hits, dies and respawns.
+- Added a compact health bar above the Knight and a player HP bar in the HUD.
+- Attack 1 deals 20 damage and Attack 2 deals 35 once per swing. Both require
+  range and a forward-facing hit; damage includes hit flash and knockback.
+- Replaced the flawed up/down idle sequence with one planted source drawing and
+  subtle shader breathing. Side idle and all run directions remain untouched.
 
 - Fixed left/right run snapping by anchoring horizontal placement to the stable
   torso instead of whichever foot happens to lead each frame. Floor height is
@@ -88,10 +98,10 @@ not a 53 MB APK. Browser eviction/private mode can require a full download.
 ## Validation
 
 Godot 4.3 import and script smoke tests run locally.
-Tests cover curated vertical idle frames, torso-stable side running, both attack
-completions, joystick movement/release, bounds and focus reset. A visual-capture script is provided
-for machines with a graphical display.
-Workflow YAML and generated cache-worker JavaScript syntax were also checked.
+Tests cover the planted vertical idle, torso-stable side running, both player
+attacks, all Knight texture dimensions, eight-direction facing, combat damage,
+death/respawn, joystick movement, road/prop bounds and focus reset. A
+visual-capture script is provided for machines with a graphical display.
 Graphical browser validation was blocked by the execution environment's socket
 permissions; no screenshot or on-device visual verification is claimed.
 

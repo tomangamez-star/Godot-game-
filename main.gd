@@ -10,7 +10,7 @@ const ATTACK2_DURATION := 0.82
 const ATTACK2_ENDS := [0.07, 0.12, 0.18, 0.24, 0.31, 0.38, 0.45, 0.53, 0.59, 0.65, 0.71, 0.82]
 const ATTACK2_FRAMES := [0, 1, 2, 3, 4, 5, 6, 7, 3, 4, 6, 7]
 const IDLE_SIDE_SEQUENCE := [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1]
-const IDLE_VERTICAL_SEQUENCE := [0, 1, 2, 3, 2, 1]
+const IDLE_VERTICAL_SEQUENCE := [0]
 var WALKABLE := PackedVector2Array([
 	Vector2(48, 152), Vector2(220, 148), Vector2(292, 190),
 	Vector2(420, 157), Vector2(615, 103), Vector2(735, 71),
@@ -46,6 +46,10 @@ var reflection := Sprite2D.new()
 var pose_material := ShaderMaterial.new()
 var attack_buffered := false
 var queued_attack := ""
+var attack_hit_done := false
+var player_health := 100
+var player_invulnerability := 0.0
+var enemy: Node2D
 
 func _ready() -> void:
 	var environment := Node2D.new()
@@ -91,6 +95,10 @@ func _ready() -> void:
 	hud.set_script(load("res://hud.gd"))
 	hud.z_index = 10
 	add_child(hud)
+	enemy = Node2D.new()
+	enemy.set_script(load("res://enemy_knight.gd"))
+	enemy.z_index = 1
+	add_child(enemy)
 	_update_pose()
 
 func _measure_foot_anchors(texture: Texture2D) -> Array[Vector2]:
@@ -141,6 +149,7 @@ func _attack() -> void:
 	if not state.begins_with("attack"):
 		state = "attack1"
 		clock = 0.0
+		attack_hit_done = false
 	elif state == "attack1" and clock > ATTACK_DURATION - 0.16:
 		attack_buffered = true
 
@@ -148,6 +157,7 @@ func _attack2() -> void:
 	if not state.begins_with("attack"):
 		state = "attack2"
 		clock = 0.0
+		attack_hit_done = false
 	elif clock > 0.38:
 		queued_attack = "attack2"
 
@@ -218,11 +228,14 @@ func _process(delta: float) -> void:
 	delta = minf(delta, 0.05)
 	clock += delta
 	idle_clock += delta
+	player_invulnerability = maxf(0.0, player_invulnerability - delta)
+	sprite.modulate = Color(1.0, 0.45, 0.45) if player_invulnerability > 0.0 and int(player_invulnerability * 30.0) % 2 == 0 else Color.WHITE
 	var movement := joystick_vector
 	var keyboard := Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT)) - float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)), float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN)) - float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
 	if keyboard.length() > 0:
 		movement = keyboard.normalized()
 	if state.begins_with("attack"):
+		_resolve_attack_hit()
 		var duration := ATTACK2_DURATION if state == "attack2" else ATTACK_DURATION
 		if clock >= duration:
 			state = "idle"
@@ -255,6 +268,36 @@ func _process(delta: float) -> void:
 	_update_pose()
 	queue_redraw()
 
+func _facing_vector() -> Vector2:
+	return {"right": Vector2.RIGHT, "down": Vector2.DOWN, "left": Vector2.LEFT, "up": Vector2.UP}[facing]
+
+func _resolve_attack_hit() -> void:
+	if attack_hit_done or not is_instance_valid(enemy) or enemy.state == "dead":
+		return
+	var active := (state == "attack1" and clock >= 0.13 and clock <= 0.40) or (state == "attack2" and clock >= 0.18 and clock <= 0.69)
+	if not active:
+		return
+	var to_enemy: Vector2 = enemy.position - position_on_screen
+	var reach := 112.0 if state == "attack2" else 94.0
+	if to_enemy.length() <= reach and _facing_vector().dot(to_enemy.normalized()) > -0.05:
+		attack_hit_done = true
+		enemy.take_damage(35 if state == "attack2" else 20, to_enemy.normalized())
+
+func _damage_player(amount: int, enemy_to_player: Vector2) -> void:
+	if player_invulnerability > 0.0:
+		return
+	player_health = maxi(0, player_health - amount)
+	player_invulnerability = 0.62
+	var knock_direction := enemy_to_player.normalized()
+	var target := position_on_screen + knock_direction * 22.0
+	if _can_stand(target):
+		position_on_screen = target
+	if player_health <= 0:
+		player_health = 100
+		position_on_screen = Vector2(576, 365)
+		if is_instance_valid(enemy):
+			enemy.respawn()
+
 func _update_pose() -> void:
 	if sheets.is_empty():
 		return
@@ -285,7 +328,7 @@ func _update_pose() -> void:
 	reflection.frame = frame
 	reflection.position = Vector2(placement.x, position_on_screen.y + (anchor.y - 128.0) * 0.16 + 3)
 	pose_material.set_shader_parameter("attack_pose", state.begins_with("attack"))
-	pose_material.set_shader_parameter("breath", 0.0)
+	pose_material.set_shader_parameter("breath", sin(idle_clock * 2.35) * 1.35 if state == "idle" and facing in ["up", "down"] else 0.0)
 
 func _draw() -> void:
 	var pulse := 0.96 + sin(idle_clock * 2.0) * 0.025 if state == "idle" else 1.0

@@ -1,6 +1,6 @@
-# Character Test v0.0.8
+# Character Test v0.0.9
 Godot 4.3 character playtest with a rainy night crossroads, solid environment
-boundaries, grounded animation, polished directional movement and two energy attacks.
+boundaries, grounded animation, two energy attacks and an eight-direction Knight bot.
 
 Read **PATCH-NOTES.md** for installation, changes, limits and validation.
 
@@ -16,7 +16,7 @@ buttons on the right. Desktop: WASD / arrow keys, Space and E. WebGL 2 is requir
 Fullscreen/orientation locking depends on browser support.
 
 ## APK (optional milestone test)
-Run **Build Character Test APK** manually. Download the v0.0.8 artifact.
+Run **Build Character Test APK** manually. Download the v0.0.9 artifact.
 This is still a debug-signed test APK, not a store release. The default icon can
 be replaced later. Existing app package ID and CPU architectures are preserved.
 
@@ -27,4 +27,5 @@ For the automated smoke test:
 godot --headless --editor --path . --import --quit
 godot --headless --path . --script tests/smoke.gd
 ```
-No sprites are redistributed separately; original license remains in assets.
+The supplied Knight sheets are included only as game resources. The original
+player-asset licence remains in `assets/Original-License.txt`.

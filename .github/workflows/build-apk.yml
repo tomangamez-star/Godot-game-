@@ -114,14 +114,14 @@ jobs:
           set -euo pipefail
           mkdir -p build
           godot --headless --editor --path . --import --quit
-          godot --headless --path . --export-debug Android build/Character-Test-v0.0.8.apk
-          test -s build/Character-Test-v0.0.8.apk
-          unzip -tq build/Character-Test-v0.0.8.apk
+          godot --headless --path . --export-debug Android build/Character-Test-v0.0.9.apk
+          test -s build/Character-Test-v0.0.9.apk
+          unzip -tq build/Character-Test-v0.0.9.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Character-Test-v0.0.8-APK
-          path: build/Character-Test-v0.0.8.apk
+          name: Character-Test-v0.0.9-APK
+          path: build/Character-Test-v0.0.9.apk
           if-no-files-found: error
           retention-days: 14
