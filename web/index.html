@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#112022">
+<title>Character Test · Crossroads</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#112022;color:#e6efeb;font:16px system-ui;min-height:100dvh;display:grid;place-items:center}
+main{width:min(560px,90vw);padding:32px 0}small{color:#74d5d3;letter-spacing:.2em}h1{font-size:clamp(36px,8vw,56px);margin:12px 0}p{color:#adbfba;line-height:1.6}
+button,a{font:inherit}button{background:#8fe7da;color:#102326;border:0;border-radius:12px;padding:16px 24px;font-weight:700;cursor:pointer}
+a{color:#8fe7da}#stage{display:none;position:fixed;inset:0;background:#112022}iframe{width:100%;height:100%;border:0}
+#exit{position:absolute;top:max(8px,env(safe-area-inset-top));right:12px;padding:8px 12px;background:#142b30d9;color:#fff;font-size:13px;z-index:2}
+</style>
+<main id="menu">
+<small>TOMANGAMEZ / PLAYTEST 0.0.6</small>
+<h1>Crossroads.</h1>
+<p>Your Godot game, directly in the browser. Turn your phone sideways for the best view.</p>
+<button id="play">Play browser test ↗</button>
+<p>Move with the left joystick. Tap ATTACK on the right.<br>On a computer: WASD / arrows + Space.</p>
+<p>The first launch downloads the engine and game. Unchanged files are cached where supported; changed game packs still download again. No APK installation.</p>
+<p><a href="game.html">Open game directly</a> · Refresh this page after a new deployment.</p>
+</main>
+<section id="stage"><iframe id="game" title="Crossroads game" allow="fullscreen; autoplay" allowfullscreen></iframe><button id="exit">Exit test</button></section>
+<script>
+const stage=document.querySelector('#stage'), game=document.querySelector('#game');
+document.querySelector('#play').onclick=async()=>{
+  stage.style.display='block'; game.src='game.html';
+  try{await stage.requestFullscreen();await screen.orientation.lock('landscape')}catch{}
+  game.focus();
+};
+document.querySelector('#exit').onclick=async()=>{
+  game.src='about:blank';stage.style.display='none';
+  if(document.fullscreenElement)try{await document.exitFullscreen()}catch{}
+};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('cache-worker.js').catch(()=>{});
+</script>
+</html>
