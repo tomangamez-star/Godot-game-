@@ -1,10 +1,29 @@
-# Character Test v0.0.6 — Crossroads browser test
+# Character Test v0.0.7 — Night crossroads polish
 
 Modified/new files only. Apply to repository root, preserving directories.
-Base commit: 075d08af0df04713a9ecfaec0bca9eb9ba0649d9.
+Base commit: 7b5926649111d9a37fc5ed32277c8256ead5f3fe.
 Keep your existing assets and main.tscn. Nothing was pushed remotely.
 
 ## Changes
+
+- Replaced the flat vector map with a project-integrated rainy anime city
+  crossroads, generated from the supplied visual reference as a background-only
+  environment. No reference HUD, characters or enemies are baked into it.
+- Reduced character scale from 0.67 to 0.55. Slash reach, centre and contact
+  shadow were reduced with it.
+- Every source frame is measured at load time and positioned from its opaque
+  foot pixels. The gameplay position now represents the actual floor contact
+  point rather than the sprite centre.
+- Restored a visible 14-step idle loop at 5.5 FPS, aligned independently for all
+  four directions so the feet stay planted.
+- Added a wet-surface reflection and a tighter pulsing contact shadow.
+- Replaced the rectangular screen clamp with a road-shaped walkable polygon.
+  Extra collision blockers cover the wrecked SUV, parked car, road barrier and
+  lower-left street furniture. Movement slides along solid edges.
+- Added foreground image regions that occlude the character beside lower walls,
+  while the controls remain in a separate top HUD layer.
+- Added lightweight animated rain over the environment.
+- Preserved the attack-button cooldown animation.
 
 - Idle: stable first pose with subtle upper-body breathing; no cycling through
   inconsistent front/back proportions.

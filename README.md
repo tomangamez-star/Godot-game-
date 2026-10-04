@@ -1,6 +1,6 @@
-# Character Test v0.0.6
-Godot 4.3 character playtest with crossroads environment, directional movement,
-stable idle, distance-based run animation and revised energy attacks.
+# Character Test v0.0.7
+Godot 4.3 character playtest with a rainy night crossroads, solid environment
+boundaries, grounded animation, directional movement and energy attacks.
 
 Read **PATCH-NOTES.md** for installation, changes, limits and validation.
 
@@ -16,7 +16,7 @@ button. Desktop: WASD / arrow keys and Space. WebGL 2 is required.
 Fullscreen/orientation locking depends on browser support.
 
 ## APK (optional milestone test)
-Run **Build Character Test APK** manually. Download the v0.0.6 artifact.
+Run **Build Character Test APK** manually. Download the v0.0.7 artifact.
 This is still a debug-signed test APK, not a store release. The default icon can
 be replaced later. Existing app package ID and CPU architectures are preserved.
 
