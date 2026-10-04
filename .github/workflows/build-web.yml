@@ -1,0 +1,60 @@
+name: Build and deploy browser test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: browser-test-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot 4.3 and Web templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          RELEASE=https://github.com/godotengine/godot/releases/download/4.3-stable
+          curl -fL --retry 3 "$RELEASE/Godot_v4.3-stable_linux.x86_64.zip" -o "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+          curl -fL --retry 3 "$RELEASE/Godot_v4.3-stable_export_templates.tpz" -o "$RUNNER_TEMP/templates.tpz"
+          mkdir -p "$HOME/.local/share/godot/export_templates/4.3.stable"
+          unzip -j -q "$RUNNER_TEMP/templates.tpz" 'templates/web*' -d "$HOME/.local/share/godot/export_templates/4.3.stable"
+      - name: Import, smoke test and export
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT=Godot_v4.3-stable_linux.x86_64
+          mkdir -p build/web
+          "$GODOT" --headless --editor --path . --import --quit
+          "$GODOT" --headless --path . --script tests/smoke.gd
+          "$GODOT" --headless --path . --export-release Web build/web/game.html
+          cp web/index.html build/web/index.html
+          python3 tools/web_cache.py build/web
+          test -s build/web/game.wasm
+          test -s build/web/game.pck
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish browser test
+        id: deployment
+        uses: actions/deploy-pages@v4
